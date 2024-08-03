@@ -1,109 +1,146 @@
-Here is the translation of the provided text into English:
+### Technical Task Description
 
----
+#### Task 1
 
-Our assistant already knows how to interact with the user via the command line, receiving commands and arguments, and performing the necessary actions. In this task, you will need to work on the internal logic of the assistant, specifically on how data is stored, what data is stored, and what can be done with it.
-☝ We will add the actual logic to the bot in the next task assignment.
+First, we will add additional functionality to the classes from the previous homework:
 
-We will use object-oriented programming for these purposes. First, let's identify several entities (models) that we will work with.
-The user will have an address book or contact book. This contact book contains records. Each record contains a set of fields.
+- Add a `birthday` field to the `Record` class for the birthday. This field should be of the `Birthday` class. This field is optional, but there can only be one.
 
-Thus, we have described the entities (classes) that need to be implemented. Next, we will look at the requirements for these classes and establish their relationships and the rules by which they will interact.
-The user interacts with the contact book by adding, deleting, and editing records. The user should also be able to search the contact book for records by one or more criteria (fields).
-It can also be said that fields can be mandatory (name) or optional (phone or email, for example). Records can also contain multiple fields of the same type (e.g., multiple phones). The user should be able to add/remove/edit fields in any record.
-
-### Technical Description of the Task
-
-Develop a system for managing an address book.
-
-#### Entities:
-- **Field**: Base class for record fields.
-- **Name**: Class for storing the contact's name. Mandatory field.
-- **Phone**: Class for storing the phone number. Has format validation (10 digits).
-- **Record**: Class for storing contact information, including name and a list of phone numbers.
-- **AddressBook**: Class for storing and managing records.
-
-#### Functionality:
-- **AddressBook**:
-  - Adding records.
-  - Searching records by name.
-  - Deleting records by name.
-- **Record**:
-  - Adding phones.
-  - Deleting phones.
-  - Editing phones.
-  - Searching for a phone.
-
-### Recommendations for Implementation
-
-As a starting point, you can use the following base code to implement this task assignment:
-```python
-from collections import UserDict
-
-class Field:
+```
+class Birthday(Field):
     def __init__(self, value):
-        self.value = value
+        try:
+            # Add data validation
+            # and convert the string to a datetime object
+        except ValueError:
+            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+```
 
-    def __str__(self):
-        return str(self.value)
-
-class Name(Field):
-    # implementation of the class
-    pass
-
-class Phone(Field):
-    # implementation of the class
-    pass
-
+```
 class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
-
-    # implementation of the class
-
-    def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
-
-class AddressBook(UserDict):
-    # implementation of the class
-    pass
+        self.birthday = None
 ```
 
-After implementation, your code should execute as follows:
-```python
-# Creating a new address book
-book = AddressBook()
+- Add functionality to work with `Birthday` in the `Record` class, specifically a function `add_birthday` that adds a birthday to the contact.
+- Add functionality to validate the values provided for the `Phone` and `Birthday` fields.
+- Add and adapt our function from the fourth homework, week 3, `get_upcoming_birthdays`, to the `AddressBook` class. This function should return a list of users to be congratulated by days over the next week.
 
-# Creating a record for John
-john_record = Record("John")
-john_record.add_phone("1234567890")
-john_record.add_phone("5555555555")
+Now your bot should work with the functionality of the `AddressBook` class. This means that instead of the `contacts` dictionary, we use `book = AddressBook()`.
 
-# Adding John's record to the address book
-book.add_record(john_record)
+#### Task 2
 
-# Creating and adding a new record for Jane
-jane_record = Record("Jane")
-jane_record.add_phone("9876543210")
-book.add_record(jane_record)
+To implement the new functionality, also add handler functions with the following commands:
 
-# Displaying all records in the book
-for name, record in book.data.items():
-    print(record)
+- `add-birthday` - add a birthday to the contact in the format DD.MM.YYYY
+- `show-birthday` - show the birthday of the contact
+- `birthdays` - returns a list of users who need to be congratulated by days over the next week
 
-# Finding and editing a phone number for John
-john = book.find("John")
-john.edit_phone("1234567890", "1112223333")
+```
+@input_error
+def add_birthday(args, book):
+    # implementation
 
-print(john)  # Output: Contact name: John, phones: 1112223333; 5555555555
+@input_error
+def show_birthday(args, book):
+    # implementation
 
-# Searching for a specific phone number in John's record
-found_phone = john.find_phone("5555555555")
-print(f"{john.name}: {found_phone}")  # Output: 5555555555
-
-# Deleting Jane's record
-book.delete("Jane")
+@input_error
+def birthdays(args, book):
+    # implementation
 ```
 
-In the next task assignment, we will add this logic to our bot.
+So, in the end, our bot should support the following list of commands:
+
+1. `add [name] [phone]`: Add a new contact with a name and phone number, or a phone number to an existing contact.
+2. `change [name] [old phone] [new phone]`: Change the phone number for the specified contact.
+3. `phone [name]`: Show the phone numbers for the specified contact.
+4. `all`: Show all contacts in the address book.
+5. `add-birthday [name] [birthday]`: Add a birthday for the specified contact.
+6. `show-birthday [name]`: Show the birthday for the specified contact.
+7. `birthdays`: Show the birthdays that will occur over the next week.
+8. `hello`: Get a greeting from the bot.
+9. `close` or `exit`: Close the program.
+
+```
+def main():
+    book = AddressBook()
+    print("Welcome to the assistant bot!")
+    while True:
+        user_input = input("Enter a command: ")
+        command, *args = parse_input(user_input)
+
+        if command in ["close", "exit"]:
+            print("Good bye!")
+            break
+
+        elif command == "hello":
+            print("How can I help you?")
+
+        elif command == "add":
+            # implementation
+
+        elif command == "change":
+            # implementation
+
+        elif command == "phone":
+            # implementation
+
+        elif command == "all":
+            # implementation
+
+        elif command == "add-birthday":
+            # implementation
+
+        elif command == "show-birthday":
+            # implementation
+
+        elif command == "birthdays":
+            # implementation
+
+        else:
+            print("Invalid command.")
+```
+
+For example, let's consider the implementation of the `add [name] [phone]` command. In the `main` function, we need to add the handling of this command in the appropriate place:
+
+```
+elif command == "add":
+    print(add_contact(args, book))
+```
+
+The implementation of the `add_contact` function might look like this:
+
+```
+@input_error
+def add_contact(args, book: AddressBook):
+    name, phone, *_ = args
+    record = book.find(name)
+    message = "Contact updated."
+    if record is None:
+        record = Record(name)
+        book.add_record(record)
+        message = "Contact added."
+    if phone:
+        record.add_phone(phone)
+    return message
+```
+
+Our `add_contact` function has two purposes - adding a new contact or updating the phone number for an existing contact in the address book. 
+
+The function parameters are a list of arguments `args` and the address book `book`. 
+- First, the function unpacks the `args` list, obtaining the `name` and `phone` from the first two elements of the list. The remaining arguments are ignored using `*_`. Then, the `find` method of the `book` object searches for a record with the `name`. If a record with such a name exists, the method returns this record, otherwise `None` is returned.
+- If the record is not found, it is a new contact and the function creates a new `Record` object with the `name` and adds it to the `book` by calling the `add_record` method. After adding the new record, the variable `message` is assigned the message "Contact added." to indicate the success of the operation.
+- Then, regardless of whether the record was found or a new one was created, the phone number is added to this record using the `add_phone` method if it was provided. Finally, the function returns a message about the result of its work: "Contact updated." if the contact was updated, or "Contact added." if the contact was added. To catch input errors and output the appropriate error message, we use the `@input_error` decorator.
+
+### Evaluation Criteria:
+
+1. Implement all the specified commands for the bot.
+2. All data should be output in a clear and user-friendly format.
+3. All errors, such as incorrect input or missing contact, should be handled informatively with the appropriate message to the user.
+4. Data validation:
+    - The birthday must be in the format DD.MM.YYYY.
+    - The phone number must consist of 10 digits.
+5. The program should close correctly after executing the `close` or `exit` commands.
