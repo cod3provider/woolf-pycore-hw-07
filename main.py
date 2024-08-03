@@ -1,37 +1,51 @@
 from address_book import AddressBook
-from record import Record
+from handlers import add_contact, change_phone, show_phone, show_all, add_birthday, show_birthday, birthdays
+
+
+def parse_input(user_input):
+    parts = user_input.split(maxsplit=1)
+    command = parts[0].lower()
+    args = parts[1].split() if len(parts) > 1 else []
+    return command, args
 
 
 def main():
     book = AddressBook()
+    print("Welcome to the assistant bot!")
+    while True:
+        user_input = input("Enter a command: ")
+        command, args = parse_input(user_input)
 
-    john_record = Record("John")
-    john_record.add_phone("1234567890")
-    john_record.add_phone("5555555555")
-    john_record.add_birthday("05.08.1990")
-    book.add_record(john_record)
+        if command in ["close", "exit"]:
+            print("Good bye!")
+            break
 
-    jane_record = Record("Jane")
-    jane_record.add_phone("9876543210")
-    jane_record.add_birthday("03.08.1985")
-    book.add_record(jane_record)
+        elif command == "hello":
+            print("How can I help you?")
 
-    for name, record in book.data.items():
-        print(record)
+        elif command in ["add", "add_contact"]:
+            print(add_contact(args, book))
 
-    john = book.find("John")
-    if john != "Contact not found":
-        john.edit_phone("1234567890", "1112223333")
-        print(john)
+        elif command == "change":
+            print(change_phone(args, book))
 
-    found_phone = john.find_phone("5555555555")
-    print(f"{john.name}: {found_phone}")
+        elif command == "phone":
+            print(show_phone(args, book))
 
-    book.delete("Jane")
+        elif command == "all":
+            print(show_all(book))
 
-    upcoming_birthdays = book.get_upcoming_birthdays()
-    for record in upcoming_birthdays:
-        print(f"Upcoming birthday: {record.name.value} on {record.birthday}")
+        elif command in ["add-birthday", "add_birthday"]:
+            print(add_birthday(args, book))
+
+        elif command == "show-birthday":
+            print(show_birthday(args, book))
+
+        elif command == "birthdays":
+            print(birthdays(args, book))
+
+        else:
+            print("Invalid command.")
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ class AddressBook(UserDict):
         self.data[record.name.value] = record
 
     def find(self, name):
-        return self.data.get(name, "Contact not found")
+        return self.data.get(name, None)
 
     def delete(self, name):
         if name in self.data:
